@@ -22,20 +22,45 @@
     <div class="container">
         <form class="col-md-6 m-auto py-5">
             <div class="input-group mb-3">
-                <input type="text" class="form-control" placeholder="Enter a location for Weather ...">
+                <input id="search-city" type="text" class="form-control" placeholder="Enter a location for Weather ...">
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-danger">Search</button>
+                    <button onclick="searchWeather()" type="button" class="btn btn-danger">Search</button>
                 </div>
             </div>
         </form>
         <div class="weather-status text-white text-center">
-            <img src="https://openweathermap.org/img/wn/02d@2x.png" alt="">
-            <h1>Dhaka</h1>
-            <h3><span>38.06</span>&deg;C</h3>
-            <h1 class="lead">Clouds</h1>
+            <img id="weather-icon" src="https://openweathermap.org/img/wn/02d@2x.png" alt="">
+            <h1 id="show-city">Dhaka</h1>
+            <h3><span id="show-temperature">38.06</span>&deg;C</h3>
+            <h1 id="weather-status" class="lead">Clouds</h1>
         </div>
     </div>
+    <script>
+        function searchWeather(){
+            const searchCity = document.getElementById("search-city").value;
+            getWeatherData(searchCity); 
+        }
 
+        const apiKey = '41dcc8a8076d78b024e42e23fa87f206';
+        const apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+        const getWeatherData = city => {
+            const url = `${apiUrl}?q=${city}&units=metric&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => updateUI(data))
+        }
+
+        const updateUI = data =>{
+            document.getElementById('show-city').innerHTML = data.name || "Unknown Location!";
+            document.getElementById('show-temperature').innerText=data.main.temp;
+            document.getElementById('weather-status').innerText=data.weather[0].main;
+            document.getElementById('weather-icon').setAttribute('src', `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`);
+            document.getElementById("search-city").value='';
+        }
+        getWeatherData('Dhaka');
+    </script>
 </body>
 
 </html>
